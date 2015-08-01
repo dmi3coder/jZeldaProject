@@ -176,6 +176,7 @@ public class ThirdPersonPlayerNode extends Node implements ActionListener, Analo
     public void onAction2(String binding,boolean valuse, float tpf){
         
     }
+    boolean stage = true;
     public void onAction(String binding, boolean value, float tpf) {
 	if (binding.equals("Left"))
 	{
@@ -210,6 +211,8 @@ public class ThirdPersonPlayerNode extends Node implements ActionListener, Analo
 	    attack = value;
 	}
         else if(binding.equals("Coords")){
+            stage = !stage;
+            if(stage)
             System.out.println(this.model.getWorldTranslation());
         }
     }

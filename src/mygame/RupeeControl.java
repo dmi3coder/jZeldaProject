@@ -4,6 +4,7 @@
  */
 package mygame;
 
+import com.jme3.audio.AudioNode;
 import com.jme3.bounding.BoundingSphere;
 import com.jme3.collision.CollisionResults;
 import com.jme3.export.InputCapsule;
@@ -23,6 +24,7 @@ import java.io.IOException;
  */
 public class RupeeControl extends AbstractControl {
     Node rootNode;
+    private AudioNode audio_gun;
     //Any local variables should be encapsulated by getters/setters so they
     //appear in the SDK properties window and can be edited.
     //Right-click a local variable to encapsulate it with getters and setters.
@@ -30,11 +32,12 @@ public class RupeeControl extends AbstractControl {
     RupeeControl(OutsetIslandAppState state, Node rootNode){
         this.state = state;
         this.rootNode = rootNode;
+        
     }
     
     @Override
     protected void controlUpdate(float tpf) {
-        spatial.rotate(0,tpf*2,0);
+        spatial.rotate(0,tpf*2.5f,0);
         BoundingSphere shape = new BoundingSphere(1f,spatial.getLocalTranslation());
 //        Vector3f spat = spatial.getWorldTranslation();
 //        Vector3f play = state.getPlayer().getCharacterControl().getPhysicsLocation();
@@ -45,7 +48,8 @@ public class RupeeControl extends AbstractControl {
             Geometry target = results.getClosestCollision().getGeometry();
             System.out.println(target.getName());
                 if(target.getName().contains("Ninja")){
-                    state.plusCoin();
+                    int count = spatial.getUserData("count");
+                    state.plusCoin(count);
                     spatial.removeFromParent();
                 }
             

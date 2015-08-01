@@ -29,7 +29,7 @@ import com.jme3.scene.Spatial;
  
 /**
  *
- * @author Berzee
+ * @author dmi3coder
  */
 public class ThirdPersonPlayerNode extends Node implements ActionListener, AnalogListener, AnimEventListener
 {

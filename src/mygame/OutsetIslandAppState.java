@@ -12,6 +12,7 @@ import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.collision.CollisionResults;
@@ -33,9 +34,18 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Quad;
+import com.jme3.ui.Picture;
 import com.jme3.util.SkyFactory;
 import com.jme3.water.SimpleWaterProcessor;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 /**
  *
@@ -52,23 +62,9 @@ public class OutsetIslandAppState extends AbstractAppState {
     private ThirdPersonPlayerNode player;
     private ViewPort viewPort;
     private int coins= 0;
-    private BitmapText rupeesText;
-    private Node rupeeNode =  new Node();
-    double[][] rupArray = {
-        {-18.69154, 1.0931492E-4, -23.35616},
-            {-18.69154, 1.0943413E-4, -23.35616},
-    {-18.648258, 0.0025357008, -19.557613},
-    {-18.648258, 0.0030688047, -19.557613},
-    {-22.398228, 4.8184395E-4, -16.563429},
-    {-22.398228, 4.8184395E-4, -16.563429},
-    {-23.242813, 0.0012034178, -11.564289},
-    {-23.242813, 0.002226472, -11.564289},
-    {-23.242813, 4.064724, -11.564289},
-    {-23.242813, 4.2730556, -11.564289},
-    {-23.076057, 6.1941147E-4, -9.922739},
-    {-23.076057, 6.195307E-4, -9.922739}
-    };
-    
+    private Node rupeeNode =  new Node("rupeeNode");
+    private ArrayList<String> rupeesLoc = new ArrayList();
+    private BitmapText distanceText;
     
     public ThirdPersonPlayerNode getPlayer(){
         return player;
@@ -88,18 +84,36 @@ public class OutsetIslandAppState extends AbstractAppState {
         
 	bulletAppState = new BulletAppState();
 	stateManager.attach(bulletAppState);
-        rootNode.attachChild(rupeeNode);
         setWorld();
         setPlayer();
         setWater();
+        setHud();
+        getRupees();
         
 //        for(int i = 0;i<40;i++)
 //            rootNode.attachChild(setCoin(new Vector3f(FastMath.nextRandomInt(-20, 20),FastMath.nextRandomInt(-20, 20),FastMath.nextRandomInt(-20, 20))));
-        rupeesText = (BitmapText)this.app.getGuiNode().getChild("Rupees");
-        for(int i = 0; i<rupArray.length;i++){
-            rootNode.attachChild(setCoin(new Vector3f((float)rupArray[i][0],(float)rupArray[i][1],(float)rupArray[i][2])));
-        }
+        
     }
+    
+    private void setHud(){
+        Picture frame = new Picture("RupeeImage");
+        frame.setImage(assetManager, "Interface/RupeeCounter/RupeeImage.png", true);
+        frame.move(app.getContext().getSettings().getWidth()-140,40,-2);
+        frame.setWidth(30);
+        frame.setHeight(30);
+        app.getGuiNode().attachChild(frame);
+        
+        BitmapFont guiFont = assetManager.loadFont("Interface/Fonts/GAMECUBEN.fnt");
+        distanceText =  new BitmapText(guiFont);
+        distanceText.setSize(guiFont.getCharSet().getRenderedSize());
+        distanceText.move(app.getContext().getSettings().getWidth()-110,
+                distanceText.getLineHeight()+40,
+                0);
+        distanceText.setName("Rupees");
+        distanceText.setText("Test");
+        app.getGuiNode().attachChild(distanceText);
+    }   
+
     private void setWorld(){
         viewPort = app.getViewPort();
  
@@ -114,14 +128,65 @@ public class OutsetIslandAppState extends AbstractAppState {
 	scene = new RigidBodyControl(sceneShape, 0);
 	sceneModel.addControl(scene);
         sceneModel.setName("Scene1");
-        rootNode.attachChild(sceneModel);
+        Node worldNode = new Node("World");
+        rootNode.attachChild(worldNode);
+        worldNode.attachChild(sceneModel);
+        //getRupees();
+        //setCoin(new Vector3f(-23.242813f, 4.064724f, -11.564289f));
+//        Node Scene1 = (Node)rootNode.getChild("Scene1");
+//        rupeeNode = (Node)Scene1.getChild("Rupees");
+//        for(Spatial s : rupeeNode.getChildren()){
+//            setPCoin(s);
+//        }
+        
     }
+    private void getRupees(){
+        rootNode.attachChild(rupeeNode);
+        try{DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document document = builder.parse(new File("assets/Scenes/TestScake/Rupees.xml"));
+        Element rootElement = document.getDocumentElement();
+            System.out.println(""+rootElement.getChildNodes());
+        NodeList list = rootElement.getElementsByTagName("loc");
+            if (list != null && list.getLength() > 0) {
+                for(int i = 0; i<list.getLength(); i++){
+            NodeList subList = list.item(i).getChildNodes();
+
+            if (subList != null && subList.getLength() > 0) {
+                rupeesLoc.add((String)subList.item(0).getNodeValue());
+            }
+                }
+        }
+        }
+        catch(Exception e){
+            System.out.println(""+e);
+        }
+        Vector3f loc;
+        for(String s:rupeesLoc){
+            char c = ',';
+            char[] value1= new char[s.indexOf(c)+1];
+            s.getChars(0, s.indexOf(c), value1, 1);
+            String rupLoc1 = new String(value1);
+            char[] value2= new char[s.lastIndexOf(c)-s.indexOf(c)+1];
+            s.getChars(s.indexOf(c)+1, s.lastIndexOf(','), value2, 1);
+            String rupLoc2 = new String(value2);
+            char[] value3 = new char[s.length()-s.lastIndexOf(c)+1];
+            s.getChars(s.lastIndexOf(c)+1, s.length(), value3, 1);
+            String rupLoc3 = new String(value3);
+            loc = new Vector3f(Float.parseFloat(rupLoc1),Float.parseFloat(rupLoc2),Float.parseFloat(rupLoc3));
+            setCoin(loc);
+        }
+        
+        
+    }
+    
     private void setPlayer(){
         bulletAppState.getPhysicsSpace().add(scene);
 	Spatial playerModel = assetManager.loadModel("Models/Ninja/Ninja.mesh.xml");
 	player = new ThirdPersonPlayerNode(playerModel, app.getInputManager(), cam);
 	player.getCharacterControl().setPhysicsLocation(new Vector3f(0f,6f,0f));
         rootNode.attachChild(player);
+        player.setName("Ninja");
         
 	bulletAppState.getPhysicsSpace().add(player);
         
@@ -161,29 +226,10 @@ public class OutsetIslandAppState extends AbstractAppState {
         rootNode.attachChild(water);
      }
     
-    private void setPCoin(Spatial r){
-        //r.scale(0.1f,0.1f,0.1f);
-        final Spatial coinModel = assetManager.loadModel("Materials/Rupee/Rupee.j3o");
-        Material coinMat = new Material(assetManager,"Common/MatDefs/Light/Lighting.j3md");
-        //coinMat.setColor("Color", ColorRGBA.Green);
-        coinModel.scale(r.getWorldScale().x);
-        coinModel.setLocalTranslation(r.getWorldTranslation().x, r.getWorldTranslation().y+1,r.getWorldTranslation().z);
-        coinModel.setLocalRotation(r.getWorldRotation());
-        coinMat.setFloat("Shininess", 5f);
-        coinMat.setBoolean("UseMaterialColors",true);
-        coinMat.setColor("Ambient", ColorRGBA.White);
-        coinMat.setColor("Specular",ColorRGBA.White);
-        coinMat.setColor("Diffuse", ColorRGBA.Green);
-        coinModel.setMaterial(coinMat);
-        coinModel.setName("Rupee");
-        coinModel.addControl(new RupeeControl(this,rootNode));
-        r.removeFromParent();
-        rupeeNode.attachChild(coinModel);
-        
-    }
-    private Spatial setCoin(Vector3f loc){
+    private void setCoin(Vector3f loc){
         final Spatial coinModel = assetManager.loadModel("Materials/Rupee/Rupee.j3o");
         coinModel.scale(0.1f, 0.1f, 0.1f);
+        
         Material coinMat = new Material(assetManager,"Common/MatDefs/Light/Lighting.j3md");
         //coinMat.setColor("Color", ColorRGBA.Green);
         coinMat.setFloat("Shininess", 5f);
@@ -192,24 +238,17 @@ public class OutsetIslandAppState extends AbstractAppState {
         coinMat.setColor("Specular",ColorRGBA.White);
         coinMat.setColor("Diffuse", ColorRGBA.Green);
         coinModel.setMaterial(coinMat);
-        //Material mat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
         coinModel.setLocalTranslation(loc);
-        //CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(1.5f, 3f, 1);
-        //coinModel.setMaterial(mat);
+        coinModel.setName("Rupee");
         System.out.println(coinModel.getName()+" created");
         coinModel.addControl(new RupeeControl(this, rootNode));
-        return coinModel;
+        rootNode.attachChild(coinModel);
     }
-    int cont = 0;
+    
     @Override
     public void update(float tpf){
-        cont++;
         player.update();
-        rupeesText.setText(""+coins);
-        if(cont==10){
-        cont=0;
-        }
-        
+        distanceText.setText(""+coins);
      }
     
     @Override

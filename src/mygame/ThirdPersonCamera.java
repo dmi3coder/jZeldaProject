@@ -35,8 +35,8 @@ public class ThirdPersonCamera
  
     //Change these as you desire. Lower verticalAngle values will put the camera
     //closer to the ground.
-    public float followDistance = 2.5f;
-    public float verticalAngle = 5 * FastMath.DEG_TO_RAD;
+    public float followDistance = 5f;
+    public float verticalAngle = 30 * FastMath.DEG_TO_RAD;
  
     //These bounds keep the camera from spinning too far and clipping through
     //the floor or turning upside-down. You can change them as needed but it is

@@ -33,8 +33,7 @@ import com.jme3.scene.Spatial;
  */
 public class ThirdPersonPlayerNode extends Node implements ActionListener, AnalogListener, AnimEventListener
 {
-    //ThirdPersonCameraNode automatically sets itself up to follow a target
-    //object. Check the "onAnalog" function here to see how we do mouselook.
+    
     private ThirdPersonCamera camera;
     private Camera cam;
  
@@ -60,13 +59,7 @@ public class ThirdPersonPlayerNode extends Node implements ActionListener, Analo
     private float gravity = 25;
     private float stepSize = .05f;
  
-    //Animation names. These are currently set up for the Ninja.mesh.xml from
-    //jme3-test-data.jar (to add that jar to your project, right-click on
-    //Libraries in the SDK project explorer, click "Add Library" and choose
-    //jme3-test-data.jar from the menu).
-    //
-    //Alternatively, use any model you like and change these animation names
-    //as needed.
+    //Animations
     private String idleAnim = "Idle1";
     private String walkAnim = "Walk";
     private String attackAnim = "Attack1";
@@ -90,7 +83,7 @@ public class ThirdPersonPlayerNode extends Node implements ActionListener, Analo
 	characterControl.setGravity(gravity);
 	this.addControl(characterControl);
 	animControl = model.getControl(AnimControl.class);
-        for (String anim : animControl.getAnimationNames()) { System.out.println(anim); }
+        //for (String anim : animControl.getAnimationNames()) { System.out.println(anim); }
 	animControl.addListener(this);
 	animChannel = animControl.createChannel();
 	animChannel.setAnim(idleAnim);
@@ -102,6 +95,7 @@ public class ThirdPersonPlayerNode extends Node implements ActionListener, Analo
     //Make sure to call this from the main simpleUpdate() loop
     public void update()
     {
+        
 	Vector3f camDir = cam.getDirection().clone();
 	camDir.y = 0;
 	Vector3f camLeft = cam.getLeft().clone();

@@ -4,6 +4,8 @@
  */
 package mygame;
 
+import com.jme3.bounding.BoundingSphere;
+import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.collision.CollisionResults;
 import com.jme3.export.InputCapsule;
 import com.jme3.export.JmeExporter;
@@ -38,16 +40,15 @@ public class RupeeControl extends AbstractControl {
     @Override
     protected void controlUpdate(float tpf) {
         spatial.rotate(0,tpf*2,0);
+        BoundingSphere shape = new BoundingSphere(1f,spatial.getLocalTranslation());
 //        Vector3f spat = spatial.getWorldTranslation();
 //        Vector3f play = state.getPlayer().getCharacterControl().getPhysicsLocation();
         CollisionResults results = new CollisionResults();
-        
-        Ray ray = new Ray(spatial.getWorldTranslation(), new Vector3f(spatial.getWorldTranslation().x,spatial.getWorldTranslation().y+2,spatial.getWorldTranslation().z));
-        rootNode.collideWith(spatial.getWorldBound() ,results);
+        rootNode.getChild("Ninja").collideWith(spatial.getWorldBound(),results);
         if(results.size()>0){
-            //System.out.println("YEP");
+//            System.out.println("YEP");
             Geometry target = results.getClosestCollision().getGeometry();
-            
+            System.out.println(target.getName());
                 if(target.getName().contains("Ninja")){
                     state.plusCoin();
                     spatial.removeFromParent();

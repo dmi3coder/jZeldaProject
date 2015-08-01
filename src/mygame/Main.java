@@ -13,17 +13,14 @@ import com.jme3.font.BitmapText;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 
-
 /**
  * test
+ *
  * @author normenhansen
  */
 public class Main extends SimpleApplication {
+
     public ViewPort viewPortP = viewPort;
-    
-    private BitmapText distanceText;
-
-
 
     public static void main(String[] args) {
         Main app = new Main();
@@ -35,19 +32,13 @@ public class Main extends SimpleApplication {
         OutsetIslandAppState state = new OutsetIslandAppState();
         flyCam.setMoveSpeed((float) 40.0);
         mouseInput.setCursorVisible(false);
-	flyCam.setEnabled(false);
+        flyCam.setEnabled(false);
         stateManager.attach(state);
         setDisplayStatView(false);
         setDisplayFps(false);
-        guiFont = assetManager.loadFont("Interface/Fonts/GAMECUBEN.fnt");
-        distanceText =  new BitmapText(guiFont);
-        distanceText.setSize(guiFont.getCharSet().getRenderedSize());
-        distanceText.move(settings.getWidth()/2,
-                distanceText.getLineHeight(),
-                0);
-        distanceText.setName("Rupees");
-        guiNode.attachChild(distanceText);
-        
+
+
+
 
     }
 

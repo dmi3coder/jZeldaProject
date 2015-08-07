@@ -33,7 +33,7 @@ import com.jme3.scene.Spatial;
  */
 public class ThirdPersonPlayerNode extends Node implements ActionListener, AnalogListener, AnimEventListener
 {
-    
+    private int health = 0;
     private ThirdPersonCamera camera;
     private Camera cam;
  
@@ -60,19 +60,22 @@ public class ThirdPersonPlayerNode extends Node implements ActionListener, Analo
     private float stepSize = .05f;
  
     //Animations
-    private String idleAnim = "Idle1";
-    private String walkAnim = "Walk";
-    private String attackAnim = "Attack1";
-    private String jumpAnim = "JumpNoHeight"; //hilarious
+    private String idleAnim = "Idle";
+    private String walkAnim = "Run";
+    private String attackAnim1 = "Hit1";
+    private String attackAnim2 = "Hit2";
+    private String attackAnim3 = "Hit3";
+    private String jumpAnim = "JumpWeap"; //not hilarious
  
     public ThirdPersonPlayerNode(Spatial model, InputManager inputManager, Camera cam)
     {
 	super();
 	this.cam = cam;
 	camera = new ThirdPersonCamera("CamNode", cam, this);
- 
+        
         this.model = model;
-	this.model.scale(0.006f); //Ninja.mesh.xml-specific scale stuff
+	this.model.scale(0.14f); //Ninja.mesh.xml-specific scale stuff
+        this.model.rotate(0,-90*FastMath.DEG_TO_RAD,0);
 	this.model.setLocalTranslation(0f, -1f, 0f); //Ninja-specific
 	this.attachChild(this.model);
  
@@ -112,6 +115,7 @@ public class ThirdPersonPlayerNode extends Node implements ActionListener, Analo
 	handleAnimations();
     }
  
+    int hitCounter = 1;
     private void handleAnimations()
     {
 	if(attacking)
@@ -120,8 +124,15 @@ public class ThirdPersonPlayerNode extends Node implements ActionListener, Analo
 	}
 	else if(attack)
 	{
- 
-	    animChannel.setAnim(attackAnim,.3f);
+            if(hitCounter == 1)
+                animChannel.setAnim(attackAnim1,.3f);
+            else if(hitCounter == 2)
+                animChannel.setAnim(attackAnim2,.3f);
+            else if(hitCounter == 3){
+                animChannel.setAnim(attackAnim3,.3f);
+                hitCounter = 0;
+            }
+            hitCounter++;
 	    animChannel.setLoopMode(LoopMode.DontLoop);
 	    attack = false;
 	    attacking = true;
@@ -165,6 +176,7 @@ public class ThirdPersonPlayerNode extends Node implements ActionListener, Analo
 	inputManager.addListener(this, "Up");
 	inputManager.addListener(this, "Down");
 	inputManager.addListener(this, "Jump");
+        
 	inputManager.addListener(this, "Attack");
 	inputManager.addListener(this, "TurnLeft");
 	inputManager.addListener(this, "TurnRight");
@@ -173,9 +185,6 @@ public class ThirdPersonPlayerNode extends Node implements ActionListener, Analo
 	inputManager.addListener(this, "Coords");
     }
  
-    public void onAction2(String binding,boolean valuse, float tpf){
-        
-    }
     boolean stage = true;
     public void onAction(String binding, boolean value, float tpf) {
 	if (binding.equals("Left"))
@@ -246,7 +255,7 @@ public class ThirdPersonPlayerNode extends Node implements ActionListener, Analo
  
     public void onAnimCycleDone(AnimControl control, AnimChannel channel, String animName)
     {
-	if(channel == animChannel && attacking && animName.equals(attackAnim))
+	if(channel == animChannel && attacking && animName.equals(attackAnim1)|animName.equals(attackAnim2)|animName.equals(attackAnim3))
 	{
 	    attacking = false;
 	}

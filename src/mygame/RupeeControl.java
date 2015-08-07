@@ -4,6 +4,7 @@
  */
 package mygame;
 
+import mygame.appStates.OutsetIslandAppState;
 import com.jme3.audio.AudioNode;
 import com.jme3.bounding.BoundingSphere;
 import com.jme3.collision.CollisionResults;
@@ -24,12 +25,11 @@ import java.io.IOException;
  */
 public class RupeeControl extends AbstractControl {
     Node rootNode;
-    private AudioNode audio_gun;
     //Any local variables should be encapsulated by getters/setters so they
     //appear in the SDK properties window and can be edited.
     //Right-click a local variable to encapsulate it with getters and setters.
     OutsetIslandAppState state;
-    RupeeControl(OutsetIslandAppState state, Node rootNode){
+    public RupeeControl(OutsetIslandAppState state, Node rootNode){
         this.state = state;
         this.rootNode = rootNode;
         
@@ -38,16 +38,26 @@ public class RupeeControl extends AbstractControl {
     @Override
     protected void controlUpdate(float tpf) {
         spatial.rotate(0,tpf*2.5f,0);
+        boolean onVater = false;
+        
+        //System.out.println(state.water.getWaterHeight());
+        if(spatial.getWorldTranslation().y<state.water.getWaterHeight()){
+            onVater = true;
+            spatial.setLocalTranslation(spatial.getWorldTranslation().x,state.water.getWaterHeight()-spatial.getWorldTranslation().y,spatial.getWorldTranslation().z);
+        }
+        if(onVater){
+            spatial.setLocalTranslation(spatial.getWorldTranslation().x,state.water.getWaterHeight(),spatial.getWorldTranslation().z);
+        }
         BoundingSphere shape = new BoundingSphere(1f,spatial.getLocalTranslation());
 //        Vector3f spat = spatial.getWorldTranslation();
 //        Vector3f play = state.getPlayer().getCharacterControl().getPhysicsLocation();
         CollisionResults results = new CollisionResults();
-        rootNode.getChild("Ninja").collideWith(spatial.getWorldBound(),results);
+        rootNode.getChild("Link").collideWith(spatial.getWorldBound(),results);
         if(results.size()>0){
 //            System.out.println("YEP");
             Geometry target = results.getClosestCollision().getGeometry();
             System.out.println(target.getName());
-                if(target.getName().contains("Ninja")){
+                if(target.getName().contains("Link")){
                     int count = spatial.getUserData("count");
                     state.plusCoin(count);
                     spatial.removeFromParent();

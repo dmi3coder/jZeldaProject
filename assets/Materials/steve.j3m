@@ -1,0 +1,7 @@
+Material steve : Common/MatDefs/Light/Lighting.j3md {
+     MaterialParameters {
+        DiffuseMap : Materials/steve2.png
+     }
+    AdditionalRenderState {
+    }
+}

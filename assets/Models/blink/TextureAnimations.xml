@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextureAnimation>
+	<Textures>Telescoe#ah_body#ah_eye.1#ah_eye.2#ah_eye.3#ah_kuchi.1#ah_kuchi.2#ah_body#ZBtoonEX#Telescoe#ah_kuchi.1#ah_eye.1</Textures>
+	<Materials>SC_eye#SC_kuchi#TelescopeA#kami</Materials>
+	<Animations>
+		<Animation>
+			<Name>hou</Name>
+			<Material>
+				<MaterialIndex>1</MaterialIndex>
+				<KeyFrames>2#3#4#3#2#6#6#6#6#6</KeyFrames>
+			</Material>
+			<Material>
+				<MaterialIndex>2</MaterialIndex>
+				<KeyFrames>#2#3#4#3#2#6#6#6#6#6</KeyFrames>
+			</Material>
+		</Animation>
+		<Animation>
+			<Name>maba</Name>
+			<Material>
+				<MaterialIndex>1</MaterialIndex>
+				<KeyFrames>2#3#4#3#2#5#5#5#5#5</KeyFrames>
+			</Material>
+			<Material>
+				<MaterialIndex>2</MaterialIndex>
+				<KeyFrames>#2#3#4#3#2#5#5#5#5#5</KeyFrames>
+			</Material>
+		</Animation>
+	</Animations>
+</TextureAnimation>

@@ -2,6 +2,8 @@ package mygame;
 
 import mygame.appStates.OutsetIslandAppState;
 import com.jme3.app.SimpleApplication;
+import com.jme3.post.FilterPostProcessor;
+import com.jme3.post.filters.CartoonEdgeFilter;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import mygame.appStates.MenuAppState;
@@ -30,6 +32,13 @@ public class Main extends SimpleApplication {
         stateManager.attach(state);
         setDisplayStatView(false);
         setDisplayFps(false);
+        FilterPostProcessor fpp=new FilterPostProcessor(assetManager);
+        CartoonEdgeFilter toon=new CartoonEdgeFilter();
+        toon.setEdgeWidth(0.5f);
+        toon.setEdgeIntensity(1.0f);
+        toon.setNormalThreshold(0.8f);
+        fpp.addFilter(toon);
+        viewPort.addProcessor(fpp);
 
 
 

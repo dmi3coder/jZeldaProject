@@ -15,7 +15,3 @@ I made some tables for the ark files from original game:
 https://docs.google.com/spreadsheets/d/16CXr9HY3FKaz8Z4bzI5dmh2tLpV1KaHCqarsd4FVLmc/edit?usp=sharing
 
 https://docs.google.com/spreadsheets/d/1E-gI0uQ2VD2__0JgV6pwwhmTXJ6pmyYEuYjgTVbvivE/edit?usp=sharing
-
-HOW TO WORK
-
-Idk how the gihub exactly works, so contact me on any possible way and give me your's code or something.
